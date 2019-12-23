@@ -8,6 +8,9 @@ sql = """
 	DROP TABLE IF EXISTS terms; 
 	DROP TABLE IF EXISTS dict; 
 	DROP TABLE IF EXISTS docs;
+	DROP SEQUENCE IF EXISTS seq_termsid; 
+
+	CREATE SEQUENCE "seq_termsid" INCREMENT BY 1 START WITH 1; 
 
 	CREATE TABLE docs (
 	    collection_id    VARCHAR(30),
@@ -23,6 +26,7 @@ sql = """
     	);
 
 	CREATE TABLE terms (
+		termsid INTEGER NOT NULL DEFAULT NEXTVAL("seq_termsid"),
 	    termid    INTEGER,
 	    docid     INTEGER,
 	    count INTEGER

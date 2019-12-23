@@ -11,48 +11,100 @@ def compute_results(args):
         output_folder = args.output
     output_folder = input_folder
 
-    monetdb_df = pd.read_csv(input_folder + "/output_monetdb_bm25_robertson_time.csv", sep=" ", names=['id', 'exec_time'])
-    duckdb_df = pd.read_csv(input_folder + "/output_duckdb_bm25_robertson_time.csv", sep=" ", names=['id', 'exec_time'])
+    input_files_monetdb = ["/output_monetdb_standard_bm25_robertson_time.csv", "/output_monetdb_surkey_bm25_robertson_time.csv",
+                    "/output_monetdb_indexed_bm25_robertson_time.csv", "/output_monetdb_surkey_indexed_bm25_robertson_time.csv"]
 
-    avg_exec_time_duckdb = np.mean(duckdb_df['exec_time'])
-    avg_exec_time_monetdb = np.mean(monetdb_df['exec_time'])
+    input_files_duckdb = ["/output_duckdb_standard_bm25_robertson_time.csv", "/output_duckdb_surkey_bm25_robertson_time.csv"]
+
+    avgs = {}
+    for input_file in input_files_monetdb + input_files_duckdb: 
+        df = pd.read_csv(input_folder + input_file, sep=" ", names=['id', 'exec_time'])
+        avgs[input_file] = np.mean(df.exec_time)
 
     with open(output_folder + '/avg_execution_times.csv', 'w', newline='') as file: 
         writer = csv.writer(file, delimiter=",", 
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(['monetdb', avg_exec_time_monetdb])
-        writer.writerow(['duckdb', avg_exec_time_duckdb])
-    
-    monetdb_boxplot_avgs = []
-    start_index = 0 
-    end_index = 250
-    for i in range(250): 
-        idx = [index for index in range(i, len(monetdb_df.index), 250)]
-        monetdb_boxplot_avgs.append(np.mean(monetdb_df['exec_time'].iloc[idx]))
-    
-    data = [monetdb_boxplot_avgs, duckdb_df['exec_time']]
-    fig1, ax1 = plt.subplots()
-    ax1.boxplot(data, vert=False)
-    ax1.set_yticklabels(['MonetDB', 'DuckDB'])
-    ax1.set_xlabel('Execution time (s)')
-    ax1.set_title('Distribution of execution times for MonetDB and DuckDB')
 
+        for key, value in avgs.items(): 
+            writer.writerow([key, value])
+
+    # Plot MonetDB distributions
+    fig1, ax1 = plt.subplots()
+    plot_exec_times_distributions(input_files_monetdb, input_folder=input_folder, tick_labels=
+                                                        ['MonetDB Standard', 'MonetDB w/ Surrogate Key', 
+                                                        'MonetDB w/ Indexes', 'MonetDB w/ Indexes and Surrogate Keys'], 
+                                                        title='Distribution of execution times for MonetDB', 
+                                                        fig=fig1,
+                                                        ax=ax1)
 
     fig2, ax2 = plt.subplots()
-    ax2.boxplot(monetdb_boxplot_avgs, vert=False)
-    ax2.set_yticklabels(['MonetDB'])
-    ax2.set_xlabel('Execution time (s)')
-    ax2.set_title('Distribution of execution times for MonetDB')
+    plot_exec_times_distributions(input_files_duckdb, input_folder=input_folder, tick_labels=
+                                                            ['DuckDB Standard', 'DuckDB w/ Surrogate Key'], 
+                                                        title='Distribution of execution times for DuckDB', 
+                                                        fig=fig2, 
+                                                        ax=ax2)
+    # fig1, ax1 = plt.subplots()
+    # data = []
+    # for input_file in input_files_monetdb:
+        
+    #     start_index = 0 
+    #     end_index = 250
+    #     df = pd.read_csv(input_folder + input_file, sep=" ", names=['id', 'exec_time'])
+    #     avgs = []
+    #     for i in range(250): 
+    #         idx = [index for index in range(i, len(df.index), 250)]
+    #         avgs.append(np.mean(df['exec_time'].iloc[idx]))
 
-    fig3, ax3 = plt.subplots()
-    ax3.boxplot(duckdb_df['exec_time'], vert=False)
-    ax3.set_yticklabels(['DuckDB'])
-    ax3.set_xlabel('Execution time (s)')
-    ax3.set_title('Distribution of execution times for DuckDB')
+    #     data.append(avgs)
+
+    # ax1.boxplot(data, vert=False)
+    # ax1.set_yticklabels(['MonetDB Standard', 'MonetDB w/ Surrogate Key', 'MonetDB w/ Indexes', 'MonetDB w/ Indexes and Surrogate Keys'])
+    # ax1.set_xlabel('Execution time (s)')
+    # ax1.set_title('Distribution of execution times for MonetDB')
+
+    # # Plot MonetDB averages
+    # fig2, ax2 = plt.subplots()
+    # data = []
+    # for input_file in input_files_duckdb:
+        
+    #     start_index = 0 
+    #     end_index = 250
+    #     df = pd.read_csv(input_folder + input_file, sep=" ", names=['id', 'exec_time'])
+    #     avgs = []
+    #     for i in range(250): 
+    #         idx = [index for index in range(i, len(df.index), 250)]
+    #         avgs.append(np.mean(df['exec_time'].iloc[idx]))
+
+    #     data.append(avgs)
+
+    # ax2.boxplot(data, vert=False)
+    # ax2.set_yticklabels(['DuckDB Standard', 'DuckDB w/ Surrogate Key'])
+    # ax2.set_xlabel('Execution time (s)')
+    # ax2.set_title('Distribution of execution times for DuckDB')
 
     plt.plot()
     plt.show(block=False)
     input('press <ENTER> to continue')
+
+def plot_exec_times_distributions(input_files, input_folder, tick_labels, title, fig, ax):
+    data = []
+    
+    for input_file in input_files:
+        start_index = 0 
+        end_index = 250
+        df = pd.read_csv(input_folder + input_file, sep=" ", names=['id', 'exec_time'])
+        avgs = []
+
+        for i in range(250): 
+            idx = [index for index in range(i, len(df.index), 250)]
+            avgs.append(np.mean(df['exec_time'].iloc[idx]))
+
+        data.append(avgs)
+
+    ax.boxplot(data, vert=False)
+    ax.set_yticklabels(tick_labels)
+    ax.set_xlabel('Execution time (s)')
+    ax.set_title(title)
 
 def main(): 
     parser = argparse.ArgumentParser()

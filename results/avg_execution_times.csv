@@ -1,2 +1,6 @@
-monetdb,0.0203265212059021
-duckdb,2.535945722579956
+/output_monetdb_standard_bm25_robertson_time.csv,0.019951353740692138
+/output_monetdb_surkey_bm25_robertson_time.csv,0.0203265212059021
+/output_monetdb_indexed_bm25_robertson_time.csv,0.02099877452850342
+/output_monetdb_surkey_indexed_bm25_robertson_time.csv,0.020738641452789308
+/output_duckdb_standard_bm25_robertson_time.csv,2.535945722579956
+/output_duckdb_surkey_bm25_robertson_time.csv,2.4675932178497315
