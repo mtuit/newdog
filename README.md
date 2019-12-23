@@ -1,6 +1,6 @@
-# OldDog
+# NewDog
 
-The repository contains the code that accompanies the blog post
+The repository contains the code that accompanies the IR-Project NewDog for group IR-C-35. It is built upon the OldDog repository (which it is forked from), which accomponies the blog post
 [Teaching An Old Dog a new Trick](https://www.chriskamphuis.com/2019/03/06/teaching-an-old-dog-a-new-trick.html).
 
 ## Preliminaries
