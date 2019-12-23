@@ -33,7 +33,7 @@ class SearchCollection:
 
         loop = 1
         if self.args.time:
-            loop = 1
+            loop = 11
 
         while loop > 0:
             for topic in topics:
@@ -57,7 +57,6 @@ class SearchCollection:
 
                 self.cursor.execute(sql_query)
                 timing = time.time() - start_millis
-                print("Timing of query is: {}".format(timing))
 
                 if self.args.time and loop <= 10:
                     if self.args.engine == 'monetdb':
@@ -66,7 +65,6 @@ class SearchCollection:
                         timing = self.cursor.fetchall()[0]
                         ofile.write("{} {}\n".format(topic['number'], timing[0]))
                     elif self.args.engine == 'duckdb':
-                        print("{} {}\n".format(topic['number'], timing))
                         ofile.write("{} {}\n".format(topic['number'], timing))
                 elif self.args.time:
                     continue 
@@ -90,6 +88,7 @@ class SearchCollection:
 
     def getConnectionCursor(self):
         dbname = self.args.collection
+        port = self.args.port
         connection = None 
         attempt = 0
         while connection is None or attempt > 20:
@@ -99,7 +98,7 @@ class SearchCollection:
 
                     connection = pymonetdb.connect(username='monetdb',
                                                    password='monetdb',
-                                                   port='5002',
+                                                   port=port,
                                                    hostname='localhost', 
                                                    database=dbname)
                 else:
@@ -129,6 +128,10 @@ class SearchCollection:
                                         'tf.l.delta.p.idf'
                                     ]
                            ) 
+        parser.add_argument('--port', 
+                            required=False, 
+                            default='50000', 
+                            help='port on which the database is located')
         parser.add_argument('--disjunctive', required=False, action='store_true', help='disjunctive processing instead of conjunctive')
         parser.add_argument('--breakTies', required=False, action='store_true', help='Force to break ties by permuting scores')
         parser.add_argument('--time', required=False, action='store_true', help='time the ranking')

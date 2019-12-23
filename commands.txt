@@ -3,11 +3,11 @@ Search Collection Command MonetDB:
 python3 search_collection.py --filename ~/ir/olddog/src/main/resources/topics-and-qrels/topics.robust04.301-450.601-700.txt --output ~/ir/newdog/output_monetdb_bm25_robertson.txt --collection robust04 --variant bm25.robertson
 
 
-
+ --port 50002
 
 Search Collection Command MonetDB w/ Time: 
 
-python3 search_collection.py --filename ~/ir/olddog/src/main/resources/topics-and-qrels/topics.robust04.301-450.601-700.txt --output ~/ir/newdog/output_monetdb_bm25_robertson_time.txt --collection robust04 --variant bm25.robertson --time
+python3 search_collection.py --filename ~/ir/olddog/src/main/resources/topics-and-qrels/topics.robust04.301-450.601-700.txt --output ~/ir/newdog/output_monetdb_bm25_robertson_time.txt --collection robust04 --variant bm25.robertson  --port 50002 --time
 
 
 
@@ -27,9 +27,9 @@ Evaluation MonetDB:
 
 eval/trec_eval.9.0.4/trec_eval -m map -m P.30 ~/ir/olddog/src/main/resources/topics-and-qrels/qrels.robust2004.txt ~/ir/newdog/output_monetdb_bm25_robertson.txt
 
+Evalulation DuckDB:
 
-
-Evalulation DuckDB: 
 eval/trec_eval.9.0.4/trec_eval -m map -m P.30 ~/ir/olddog/src/main/resources/topics-and-qrels/qrels.robust2004.txt ~/ir/newdog/output_duckdb_bm25_robertson.txt
 
-
+Calculate Average Execution Times: 
+python compute_results.py --input "C:\Users\Mick\Documents\RU\Master Data Science\Information Retrieval\Project\newdog\results"

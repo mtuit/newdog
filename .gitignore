@@ -32,6 +32,7 @@ out.*
 target/
 bin/
 
+
 # Python
 **/__pycache__
 
@@ -40,3 +41,4 @@ duckdb/
 
 # VS Code
 .vscode/
+.*

@@ -1,6 +1,8 @@
 import duckdb
 
-folder = "/home/mick/ir/olddog/"
+"""Script to create Robust04 database scheme in DuckDB"""
+
+folder = "/home/mick/ir/olddog"
 
 sql = """
 	DROP TABLE IF EXISTS terms; 
@@ -33,17 +35,17 @@ sql = """
 """
 
 copy_docs = """ COPY docs
-FROM '{}docs.csv' 
+FROM '{}/docs.csv' 
 WITH (DELIMITER '|')
 """
 
 copy_dict = """ COPY dict
-FROM '{}dict.csv' 
+FROM '{}/dict.csv' 
 WITH (DELIMITER '|')
 """
 
 copy_terms = """ COPY terms
-FROM '{}terms.csv' 
+FROM '{}/terms.csv' 
 WITH (DELIMITER '|') 
 """
 

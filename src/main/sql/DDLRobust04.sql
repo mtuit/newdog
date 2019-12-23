@@ -1,3 +1,7 @@
+-- DDL to create Robust04 database scheme in MonetDB
+-- For optimal loading times of the csv bulk data, add the foreign keys after loading the data. The data will still be checked if it does not violate
+-- the data, however it is much quicker as opposed to check after every INSERT statement. 
+
 START TRANSACTION;
 SET SCHEMA "sys";
 CREATE TABLE "sys"."docs" (
