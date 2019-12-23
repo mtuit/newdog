@@ -1,0 +1,35 @@
+Search Collection Command MonetDB: 
+
+python3 search_collection.py --filename ~/ir/olddog/src/main/resources/topics-and-qrels/topics.robust04.301-450.601-700.txt --output ~/ir/newdog/output_monetdb_bm25_robertson.txt --collection robust04 --variant bm25.robertson
+
+
+
+
+Search Collection Command MonetDB w/ Time: 
+
+python3 search_collection.py --filename ~/ir/olddog/src/main/resources/topics-and-qrels/topics.robust04.301-450.601-700.txt --output ~/ir/newdog/output_monetdb_bm25_robertson_time.txt --collection robust04 --variant bm25.robertson --time
+
+
+
+Search Collection Command DuckDB: 
+
+python3 search_collection.py --filename ~/ir/olddog/src/main/resources/topics-and-qrels/topics.robust04.301-450.601-700.txt --output ~/ir/newdog/output_duckdb_bm25_robertson.txt --collection robust04 --variant bm25.robertson --engine duckdb
+
+
+
+Search Collection Command DuckDB w/ Time: 
+
+python3 search_collection.py --filename ~/ir/olddog/src/main/resources/topics-and-qrels/topics.robust04.301-450.601-700.txt --output ~/ir/newdog/output_duckdb_bm25_robertson_time.txt --collection robust04 --variant bm25.robertson --engine duckdb --time
+
+
+
+Evaluation MonetDB: 
+
+eval/trec_eval.9.0.4/trec_eval -m map -m P.30 ~/ir/olddog/src/main/resources/topics-and-qrels/qrels.robust2004.txt ~/ir/newdog/output_monetdb_bm25_robertson.txt
+
+
+
+Evalulation DuckDB: 
+eval/trec_eval.9.0.4/trec_eval -m map -m P.30 ~/ir/olddog/src/main/resources/topics-and-qrels/qrels.robust2004.txt ~/ir/newdog/output_duckdb_bm25_robertson.txt
+
+

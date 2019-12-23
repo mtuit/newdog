@@ -33,12 +33,13 @@ class SearchCollection:
 
         loop = 1
         if self.args.time:
-            loop = 11
+            loop = 1
 
         while loop > 0:
             for topic in topics:
                 query_terms = topic['title'].split(" ")
                 ids = [] 
+                start_millis = 0
                 for qterm in query_terms:
                     self.cursor.execute("SELECT termid FROM dict WHERE dict.term = '{}'".format(qterm))
                     term_id = self.cursor.fetchone()
@@ -49,15 +50,24 @@ class SearchCollection:
                     sql_query = self.getQueryTemplate(collection_size, avg_doc_len).format(term_ids)
                 else:
                     sql_query = self.getQueryTemplate(collection_size, avg_doc_len).format(term_ids, len(ids))
-                if self.args.time:
+                if self.args.time and self.args.engine == 'monetdb':
                     sql_query = 'TRACE ' + sql_query
-                
+                elif self.args.time and self.args.engine == 'duckdb':
+                    start_millis = time.time()
+
                 self.cursor.execute(sql_query)
+                timing = time.time() - start_millis
+                print("Timing of query is: {}".format(timing))
 
                 if self.args.time and loop <= 10:
-                    self.cursor.execute('select cast(max(clk) as double) - cast(min(clk) as double) from tracelog;')
-                    timing = self.cursor.fetchall()[0]
-                    ofile.write("{} {}\n".format(topic['number'], timing[0]))
+                    if self.args.engine == 'monetdb':
+
+                        self.cursor.execute('select cast(max(clk) as double) - cast(min(clk) as double) from tracelog;')
+                        timing = self.cursor.fetchall()[0]
+                        ofile.write("{} {}\n".format(topic['number'], timing[0]))
+                    elif self.args.engine == 'duckdb':
+                        print("{} {}\n".format(topic['number'], timing))
+                        ofile.write("{} {}\n".format(topic['number'], timing))
                 elif self.args.time:
                     continue 
                 else:
@@ -89,6 +99,7 @@ class SearchCollection:
 
                     connection = pymonetdb.connect(username='monetdb',
                                                    password='monetdb',
+                                                   port='5002',
                                                    hostname='localhost', 
                                                    database=dbname)
                 else:
@@ -133,4 +144,3 @@ class SearchCollection:
         
 if __name__ == '__main__':
     SearchCollection()      
- 
