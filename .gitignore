@@ -34,3 +34,9 @@ bin/
 
 # Python
 **/__pycache__
+
+# DuckDB folder
+duckdb/
+
+# VS Code
+.vscode/
